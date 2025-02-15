@@ -28,9 +28,9 @@ def save_tasks(tasks):
         json.dump(tasks, f)
 
 priority_emoji = {
-        '0-Hight': '❗❗❗',    # High
-        '1-Medium': '❗❗',     # Medium
-        '2-Low': '❗',          # Low
+        '0-High': '❗❗❗High',    # High
+        '1-Medium': '❗❗Meddium',     # Medium
+        '2-Low': '❗Low',          # Low
 }
 
 with gr.Blocks(theme=gr.themes.Default(primary_hue="emerald"),
@@ -67,10 +67,10 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="emerald"),
                             state = not state
                             return state
                         done_btn.click(update_status, [state], [state])
-                        brief = f'''{priority_emoji[task['priority']]} | 📅 {task['ETA']}  📝{task['note']} '''
+                        brief = f'''{priority_emoji[task['priority']]}📅{task['CT']}~{task['ETA']}🛫{task['ATD']}~{task['ATA']}📝{"None" if task['note']=="" else task['note']} '''
                     with gr.Accordion(brief,open=False):
                         note = gr.Textbox(value=task['note'], placeholder="note", lines=2,show_label=False, container=False)
-                        priority = gr.Dropdown(choices=['0-Hight','1-Medium', '2-Low'],
+                        priority = gr.Dropdown(choices=['0-High','1-Medium', '2-Low'],
                                                 value=task['priority'],interactive=True)
                         with gr.Row():
                             ct = gr.DateTime(label="Creation Time", type='string', value=task['CT'], interactive=True)
