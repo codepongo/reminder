@@ -28,9 +28,9 @@ def save_tasks(tasks):
         json.dump(tasks, f)
 
 priority_emoji = {
-        '0-High': '❗❗❗High',    # High
-        '1-Medium': '❗❗Meddium',     # Medium
-        '2-Low': '❗Low',          # Low
+        '0-High': '❗❗❗High',     # High
+        '1-Medium': '❗❗Meddium',  # Medium
+        '2-Low': '❗Low',           # Low
 }
 
 with gr.Blocks(theme=gr.themes.Default(primary_hue="emerald"),
@@ -136,12 +136,16 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="emerald"),
         with gr.Tab(f"Complete Tasks ({len(complete)})"):
             for task in complete:
                 status_emoji = {
-                        "Done":"✔",
-                        "done":"✔",
-                        "Dropped":"❌",
-                        "dropped":"❌",
+                        "Done":"🎉Done",
+                        "done":"🎉Done",
+                        "Dropped":"🗑️Dropped",
+                        "dropped":"🗑️Dropped",
                 }
-                brief = gr.HTML(value=f"<h2>{status_emoji[task['status']]}{priority_emoji[task['priority']]}<b>{task['title']}</b></h2><p>📅From:{task['ATD']} to {task['ATA']}({task['AE']})</p><p>{task['note']}</p>")
+                brief = gr.HTML(value=f'''<h2>[{status_emoji[task['status']]}] <b>{task['title']}</b></h2>
+<p>{priority_emoji[task['priority']]}</p>
+<p>📅From:{task['CT']} to {task['ETA']}👷{task['EE']}</p>
+<p>🛫From:{task['ATD']} to {task['ATA']}👷{task['AE']}</p>
+<p> 🗒️{task['note']}</p>''')
                 redo = gr.Button(scale=1, value="Redo") 
                 def update_status(state, task=task):
                     task["status"] = ''
@@ -155,4 +159,3 @@ demo.launch(server_name = '0.0.0.0',
             favicon_path=favicon,
             auth = ('zuohaitao', password),
         )
-
