@@ -81,17 +81,8 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="emerald"),
                             ata = gr.DateTime(label="Actual Time of Arrival", type='string', value=task['ATA'], interactive=True)
                             ae = gr.Number(label="Actual Effort", value=task['AE'], step=0.25,minimum=0, maximum=5)
                         with gr.Row():
-                            delete_btn = gr.Button("Delete", variant="stop")
-                            def delete(state, task=task):
-                                #task_list.remove(task)
-                                task["status"] = 'Dropped'
-                                save_tasks(task_list)
-                                state = not state
-                                return state
-                            delete_btn.click(delete, [state], [state])
-
                             update_btn = gr.Button("Update")
-                            def update(state, note, priority, ct, eta, ee, atd, ata, ae, task=task):
+                            def update(state, note, priority, ct, eta, ee, atd, ata, ae, task=task, scale=3):
                                 task['note'] = note
                                 task['priority'] = priority
                                 task['CT'] = ct
@@ -104,6 +95,28 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="emerald"),
                                 state = not state
                                 return state
                             update_btn.click(update, [state, note,priority,ct, eta, ee, atd, ata, ae], [state])
+                            delete_btn = gr.Button("Delete", variant="stop", scale=0)
+                            confirm_btn = gr.Button("Confirm to Delete", variant="stop", visible=False)
+                            cancel_btn = gr.Button("Cancel", visible=False)
+                            delete_btn.click(lambda: [gr.update(visible=False), 
+                                                      gr.update(visible=False),
+                                                      gr.update(visible=True),
+                                                      gr.update(visible=True)], 
+                                                      None,
+                                                      [update_btn, delete_btn, confirm_btn, cancel_btn])
+                            
+                            def delete(state, task=task):
+                                task["status"] = 'Dropped'
+                                save_tasks(task_list)
+                                state = not state
+                                return state, gr.update(visible=True), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False)
+                            confirm_btn.click(delete, [state], [state, update_btn, delete_btn, confirm_btn, cancel_btn])
+                            cancel_btn.click(lambda: [gr.update(visible=True), 
+                                                      gr.update(visible=True),
+                                                      gr.update(visible=False),
+                                                      gr.update(visible=False)], 
+                                                      None,
+                                                      [update_btn, delete_btn, confirm_btn, cancel_btn])
             new_task = gr.Button("Add Task")
             def create(state):
                 task_list.append({"title": "",
